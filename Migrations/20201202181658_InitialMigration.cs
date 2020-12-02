@@ -10,34 +10,34 @@ namespace Purchases.Migrations
                 name: "basket",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserBasketId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_basket", x => x.Id);
+                    table.PrimaryKey("PK_basket", x => x.UserBasketId);
                 });
 
             migrationBuilder.CreateTable(
                 name: "UserBasketItem",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserBasketItemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<double>(type: "float", nullable: false),
-                    UserBasketId = table.Column<int>(type: "int", nullable: true)
+                    UserBasketId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserBasketItem", x => x.Id);
+                    table.PrimaryKey("PK_UserBasketItem", x => x.UserBasketItemId);
                     table.ForeignKey(
                         name: "FK_UserBasketItem_basket_UserBasketId",
                         column: x => x.UserBasketId,
                         principalTable: "basket",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "UserBasketId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(

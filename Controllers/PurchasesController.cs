@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using purchase.Models;
 using purchase.Data;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Purchases.Controllers
 {
@@ -11,10 +13,12 @@ namespace Purchases.Controllers
     public class PurchasesController : ControllerBase
     {
         private readonly IPurchasesRepo _repository;
+        private readonly PurchaseContext _context;
 
-        public PurchasesController(IPurchasesRepo repository)
+        public PurchasesController(IPurchasesRepo repository, PurchaseContext context)
         {
             _repository = repository;
+            _context = context;
         }
         
         // //private readonly MockpurchasesRepo _repositorty = new MockpurchasesRepo();
@@ -28,24 +32,28 @@ namespace Purchases.Controllers
 
         //GET api/commands/{id}
         [HttpGet("{id}")]
-        public IActionResult GetCommandById(int id)
+        public async Task<ActionResult<UserBasket>> GetCommandById(int id)
         {
-            var purchaseItem = _repository.GetUserBasketById(id);
-            return Ok(purchaseItem);
-        }
+            var item = await _context.basket.FindAsync(id);
 
-        // POST api/commands
-        [HttpPost]
-        public IActionResult CompleteItemPurchase(UserBasket basket) 
-        {
-            if(basket == null) 
+            if(item == null) 
             {
                 return NotFound();
             }
+            // var purchaseItem = _repository.GetUserBasketById(id);
+            return item;
+        }
 
-            _repository.CompletePurchase(basket);
+        // POST api/commands
+        [HttpPut("{id}")]
+        public async Task<IActionResult> CompleteItemPurchase(int id, UserBasket userBasketItems) 
+        {
+            
+           _context.basket.Add(userBasketItems);
+           await _context.SaveChangesAsync();
+            // _repository.CompletePurchase(basket);
 
-            return NoContent();
+            return CreatedAtAction(nameof(GetCommandById), new {id = userBasketItems.UserBasketId }, userBasketItems);
 
         }
     }

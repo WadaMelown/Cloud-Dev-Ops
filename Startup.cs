@@ -30,8 +30,12 @@ namespace Purchases
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddDbContext<PurchaseContext>(opt => opt.UseSqlServer
-                (Configuration.GetConnectionString("PurchaseConnection")));
+        services.AddDbContext<PurchaseContext>(opt => opt
+            .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=BookStoresApiDb;Trusted_Connection=True;"));
+            
+            
+        //    services.AddDbContext<PurchaseContext>(opt => opt.UseSqlServer
+        //        (Configuration.GetConnectionString("PurchaseConnection")));
 
             services.AddControllers();
 
