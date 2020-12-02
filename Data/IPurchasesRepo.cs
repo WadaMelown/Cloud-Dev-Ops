@@ -1,12 +1,14 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using purchase.Models;
 
 namespace purchase.Data
 {
     public interface IPurchasesRepo
     {
-        UserBasket GetUserBasketById(int id);
+        Task<UserBasket> GetUserBasketById(int id);
 
-        void CompletePurchase(UserBasket items);
+        Task<ActionResult> CompletePurchase(UserBasket items);
     }
 }

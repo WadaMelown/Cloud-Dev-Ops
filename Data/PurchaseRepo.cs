@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using purchase.Models;
 
 
@@ -13,15 +15,17 @@ namespace purchase.Data
             _context = context;
         }
 
-        public void CompletePurchase(UserBasket items)
+        public async Task<ActionResult> CompletePurchase(UserBasket items)
         {
-            var Test = _context.basket.Add(items);
-            //_context.basket.Add(items);
+             _context.basket.Add(items);
+            await _context.SaveChangesAsync();
+
+            return null;
         }
 
-        public UserBasket GetUserBasketById(int id)
+        public async Task<UserBasket> GetUserBasketById(int id)
         {
-            var userBasket = _context.basket.Find(id);
+            var userBasket = await _context.basket.FindAsync(id);
 
             if(userBasket == null) 
             {

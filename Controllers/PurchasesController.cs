@@ -20,39 +20,27 @@ namespace Purchases.Controllers
             _repository = repository;
             _context = context;
         }
-        
-        // //private readonly MockpurchasesRepo _repositorty = new MockpurchasesRepo();
-        // [HttpGet]
-        // public ActionResult <IEnumerable<Purchase>> GetAllCommands()
-        
-        // {
-        //     var purchaseItems = _repository.GetAppCommands();
-        //     return Ok(purchaseItems);
-        // }
 
         //GET api/commands/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<UserBasket>> GetCommandById(int id)
         {
-            var item = await _context.basket.FindAsync(id);
+            var item = await _repository.GetUserBasketById(id);
 
             if(item == null) 
             {
                 return NotFound();
             }
-            // var purchaseItem = _repository.GetUserBasketById(id);
             return item;
         }
 
         // POST api/commands
-        [HttpPut("{id}")]
-        public async Task<IActionResult> CompleteItemPurchase(int id, UserBasket userBasketItems) 
+        [HttpPost("{id}")]
+        public IActionResult CompleteItemPurchase(int id, UserBasket userBasketItems) 
         {
             
-           _context.basket.Add(userBasketItems);
-           await _context.SaveChangesAsync();
-            // _repository.CompletePurchase(basket);
-
+            _repository.CompletePurchase(userBasketItems);
+            
             return CreatedAtAction(nameof(GetCommandById), new {id = userBasketItems.UserBasketId }, userBasketItems);
 
         }
