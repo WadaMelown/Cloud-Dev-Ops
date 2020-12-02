@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using purchase.Data;
-using purchases.Data;
+using Microsoft.OpenApi.Models;
 
 namespace Purchases
 {
@@ -29,12 +29,19 @@ namespace Purchases
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Data.PurchaseContext>(opt => opt.UseSqlServer
+
+            services.AddDbContext<PurchaseContext>(opt => opt.UseSqlServer
                 (Configuration.GetConnectionString("PurchaseConnection")));
-            
+
             services.AddControllers();
 
-            services.AddScoped<IpurchasesRepo, MockpurchasesRepo>();
+            // services.AddScoped<IPurchaseRepo, MockpurchasesRepo>();
+            services.AddScoped<IPurchasesRepo, PurchaseRepo>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Purchases" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +58,22 @@ namespace Purchases
             }
 
             app.UseHttpsRedirection();
+
             app.UseRouting();
-            _ = app.UseMvc();
+            
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Purchases API");
+            });
         }
     }
 

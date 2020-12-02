@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using purchase.Models;
 
-namespace Purchases.Data
+namespace purchase.Data
 {
     public class PurchaseContext : DbContext
     {
@@ -10,6 +10,6 @@ namespace Purchases.Data
 
         }
 
-        public DbSet<Purchase> purchase { get; set; }
+        public DbSet<UserBasket> basket { get; set; }
     }
 }

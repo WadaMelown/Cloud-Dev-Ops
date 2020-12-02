@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using purchases.Data;
 using System.Collections.Generic;
 using purchase.Models;
 using purchase.Data;
@@ -11,29 +10,43 @@ namespace Purchases.Controllers
     [ApiController]
     public class PurchasesController : ControllerBase
     {
-        private readonly IpurchasesRepo _repository;
+        private readonly IPurchasesRepo _repository;
 
-        public PurchasesController(IpurchasesRepo repository)
+        public PurchasesController(IPurchasesRepo repository)
         {
             _repository = repository;
         }
         
-        //private readonly MockpurchasesRepo _repositorty = new MockpurchasesRepo();
-        [HttpGet]
-        public ActionResult <IEnumerable<Purchase>> GetAllCommands()
+        // //private readonly MockpurchasesRepo _repositorty = new MockpurchasesRepo();
+        // [HttpGet]
+        // public ActionResult <IEnumerable<Purchase>> GetAllCommands()
         
-        {
-            var purchaseItems = _repository.GetAppCommands();
-            return Ok(purchaseItems);
-        }
+        // {
+        //     var purchaseItems = _repository.GetAppCommands();
+        //     return Ok(purchaseItems);
+        // }
 
         //GET api/commands/{id}
         [HttpGet("{id}")]
-        public ActionResult <Purchase> GetCommandById(int id)
-        
+        public IActionResult GetCommandById(int id)
         {
-            var purchaseItem = _repository.GetCommandById(id);
+            var purchaseItem = _repository.GetUserBasketById(id);
             return Ok(purchaseItem);
+        }
+
+        // POST api/commands
+        [HttpPost]
+        public IActionResult CompleteItemPurchase(UserBasket basket) 
+        {
+            if(basket == null) 
+            {
+                return NotFound();
+            }
+
+            _repository.CompletePurchase(basket);
+
+            return NoContent();
+
         }
     }
 
